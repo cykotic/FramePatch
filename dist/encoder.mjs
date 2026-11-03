@@ -19,7 +19,9 @@ export async function encodeVideo(file,settings,{signal,onProgress=()=>{}}={}) {
   const args=exportArgs(settings);
   if(file.size>500*1024*1024) throw new Error('Custom export supports files up to 500 MB. Original-quality patching supports larger files.');
   const check=()=>{if(signal?.aborted)throw new DOMException('Cancelled','AbortError');};
-  check();onProgress(0,'Loading video engine (~31 MB on first use)');
+  check();onProgress(0,'Preparing video');
+  let inputBytes=new Uint8Array(await file.arrayBuffer());check();
+  onProgress(0,'Loading video engine (~31 MB on first use)');
   const FFmpeg=await library();check();const ffmpeg=new FFmpeg();let coreURL,wasmURL;
   const abort=()=>ffmpeg.terminate();signal?.addEventListener('abort',abort,{once:true});
   try {
@@ -31,7 +33,7 @@ export async function encodeVideo(file,settings,{signal,onProgress=()=>{}}={}) {
     const started=performance.now();let lastLog='';
     ffmpeg.on('log',({message})=>{lastLog=message;});
     ffmpeg.on('progress',({progress,time})=>onProgress(18+Math.max(0,Math.min(1,progress||0))*76,`Encoding ${settings.fps} FPS · ${Math.max(0,time/1000000).toFixed(1)} sec processed · ${Math.round((performance.now()-started)/1000)} sec elapsed`));
-    onProgress(15,'Reading video into the encoder');await ffmpeg.writeFile('input.mov',new Uint8Array(await file.arrayBuffer()));check();
+    onProgress(15,'Reading video into the encoder');await ffmpeg.writeFile('input.mov',inputBytes);inputBytes=null;check();
     onProgress(18,'Encoding video on your device');const code=await ffmpeg.exec(args);check();
     if(code!==0)throw new Error('Export failed. Try a lower resolution or smaller clip. '+lastLog.slice(0,160));
     onProgress(96,'Preparing your MP4');const bytes=await ffmpeg.readFile('output.mp4');check();
