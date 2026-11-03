@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101311">
+<title>Framepatch — Free video patcher</title><meta name="description" content="Patch MP4 and MOV videos locally in your browser. Free, lossless, and private. Works on mobile and desktop.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23ccff7b'/%3E%3Cpath d='M20 16h26v8H28v8h15v8H28v10h-8z' fill='%23101311'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+<header><a class="brand" href="./" aria-label="Framepatch home"><span class="brand-icon">f<span>↗</span></span>framepatch<span class="brand-dot">.</span></a><span class="local"><i></i> Runs on your device</span></header>
+<main>
+<section class="intro"><div class="eyebrow"><span></span> THE FREE VIDEO PATCHER</div><h1>Your video.<br>Same quality.<br><span>Ready to post.</span></h1><p>Pick a video. Patch the container.<br>Keep every frame exactly as you made it.</p><div class="benefits"><span>✓ No re-encoding</span><span>✓ No uploads</span><span>✓ Always free</span></div><div class="signal" aria-hidden="true"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div><span class="signal-caption">LESS FRICTION. SAME FRAMES.</span></section>
+<section class="tool" aria-label="Video patcher"><div class="tool-heading"><h2>Let’s patch it.</h2><span class="pill">100% LOCAL</span></div><p class="tool-sub">From your device. Back to your device.</p>
+<input id="file" type="file" accept=".mp4,.mov,video/mp4,video/quicktime" hidden>
+<button id="drop" class="drop" type="button"><span class="upload-icon" aria-hidden="true">↥</span><strong>Choose your video</strong><span class="drop-hint">or drop it right here</span><span class="formats">MP4 / MOV <b>·</b> No account needed</span></button>
+<div id="selected" class="selected" hidden><div class="file-symbol" aria-hidden="true">▶</div><div class="file-info"><strong id="filename"></strong><span id="filemeta"></span></div><button id="remove" class="icon-button" aria-label="Remove video">×</button></div>
+<video id="preview" controls playsinline preload="metadata" hidden></video>
+<details id="options"><summary>Patch settings <span>Optional</span></summary><label class="setting"><input id="mode" type="checkbox" checked><span><strong>Match the sample patch</strong><small>Uses the same movie-header change as your Zilem example. Turn off to keep a standard movie duration.</small></span></label></details>
+<button id="patch" class="primary" disabled><span>Patch video</span><span aria-hidden="true">↗</span></button>
+<div id="progress-area" hidden><div class="progress"><div id="bar"></div></div><div class="progress-line"><span id="progress-label">Reading video</span><button id="cancel" class="text-button">Cancel</button></div></div>
+<div id="message" role="status" aria-live="polite"></div>
+<div id="result" hidden><div class="success-title"><span>✓</span> All patched. All yours.</div><p>Your video and audio stay unchanged.</p><a id="download" class="primary" download><span>Download video</span><span aria-hidden="true">↓</span></a><button id="another" class="text-button another">Patch another video</button><p class="save-hint">On iPhone, save the download to Files, then share it to Photos.</p></div>
+<p class="privacy"><span aria-hidden="true">⌁</span> Your video never leaves this browser.</p></section>
+</main>
+<section class="explain" aria-label="How it works"><article><span>01 / SELECT</span><h3>Bring your original.</h3><p>Choose an MP4 or MOV from your phone or computer.</p></article><article><span>02 / PATCH</span><h3>A small structural change.</h3><p>Reorganizes the container and removes export metadata. No video conversion.</p></article><article><span>03 / SAVE</span><h3>Keep every frame.</h3><p>Download a new copy. Your original file stays untouched.</p></article></section>
+<footer><span>framepatch. <b>Made for your next edit.</b></span><details><summary>What does the patch do?</summary><p>Moves the movie index to the front, removes global export metadata, and optionally applies the unspecified-duration header observed in the supplied sample. Encoded video and audio are copied unchanged. Platform compression results vary; improved TikTok upload quality has not been verified. Standard, self-contained MP4/MOV files are supported. Fragmented files are not.</p></details></footer>
+</div><script type="module" src="app.mjs"></script>
+</body></html>

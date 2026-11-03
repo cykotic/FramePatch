@@ -1,0 +1,6 @@
+.openai/
+*-preview.png
+__pycache__/
+*.mp4
+*.mov
+*.zip
