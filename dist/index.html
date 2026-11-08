@@ -17,7 +17,8 @@
 <div id="selected" class="selected" hidden><div class="file-symbol" aria-hidden="true">▶</div><div class="file-info"><strong id="filename"></strong><span id="filemeta"></span></div><button id="remove" class="icon-button" aria-label="Remove video">×</button></div>
 <video id="preview" controls playsinline preload="metadata" hidden></video>
 <section id="options" class="export-options" aria-label="Export settings">
-<label class="field">Export mode<select id="export-mode"><option value="original">Original quality · patch only</option><option value="custom">Custom FPS &amp; quality</option></select></label>
+<label class="field">Export mode<select id="export-mode"><option value="original">Original quality · patch only</option><option value="custom">Custom FPS &amp; quality</option><option value="transport">Transport stream · Experimental</option></select></label>
+<p id="transport-note" class="setting-note" hidden>Preserves your H.264 video and frame rate, converts audio to AAC, and saves a transport stream with an .mp4 filename. TikTok playback quality may vary.</p>
 <div id="custom-settings" hidden>
 <div class="presets"><button type="button" id="preset-hd">TikTok HD · 60 FPS</button><button type="button" id="preset-max">Max input · 60 FPS</button></div>
 <div class="settings-grid"><label class="field">Frame rate <span>1–120 FPS</span><input id="fps" type="number" min="1" max="120" step="any" value="60" inputmode="decimal"></label><label class="field">Resolution<select id="resolution"><option value="0">Original dimensions</option><option value="720">720p</option><option value="1080" selected>1080p · Full HD</option><option value="1440">1440p · QHD</option><option value="2160">2160p · 4K UHD</option><option value="4096">Max input · 4096 px</option></select></label></div>

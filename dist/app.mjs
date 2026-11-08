@@ -8,7 +8,7 @@ const size=n=>n>=1024**3?(n/1024**3).toFixed(2)+' GB':(n/1024**2).toFixed(1)+' M
 const controls=()=>[...document.querySelectorAll('#options select,#options input,#options button')];
 function revoke(){if(inputURL)URL.revokeObjectURL(inputURL);if(resultURL)URL.revokeObjectURL(resultURL);inputURL=resultURL=null;}
 function settings(){return {fps:Number($('fps').value),resolution:Number($('resolution').value),quality:Number($('quality').value),bitrate:Number($('bitrate').value)};}
-function sync(){const custom=$('export-mode').value==='custom';$('custom-settings').hidden=!custom;$('patch-label').textContent=custom?'Export video':'Patch video';$('fps-note').textContent=Number($('fps').value)>60?'Above TikTok’s documented 60 FPS limit. Extra frames repeat existing frames; this does not add new motion detail.':'Changing frame rate duplicates or drops frames; playback speed and audio timing stay the same.';$('quality-label').textContent=Number($('quality').value)<=18?'Maximum':Number($('quality').value)<=23?'High':'Smaller file';$('quality').disabled=busy||Number($('bitrate').value)>0;}
+function sync(){const mode=$('export-mode').value;$('custom-settings').hidden=mode!=='custom';$('transport-note').hidden=mode!=='transport';$('patch-label').textContent=mode!=='original'?'Export video':'Patch video';$('fps-note').textContent=Number($('fps').value)>60?'Above TikTok’s documented 60 FPS limit. Extra frames repeat existing frames; this does not add new motion detail.':'Changing frame rate duplicates or drops frames; playback speed and audio timing stay the same.';$('quality-label').textContent=Number($('quality').value)<=18?'Maximum':Number($('quality').value)<=23?'High':'Smaller file';$('quality').disabled=busy||Number($('bitrate').value)>0;}
 function reset(){selectionId++;selectionController?.abort();controller?.abort();revoke();file=null;$('file').value='';$('preview').pause();$('preview').removeAttribute('src');$('preview').load();for(const id of ['selected','preview','result','progress-area'])$(id).hidden=true;$('drop').hidden=false;$('patch').hidden=false;$('patch').disabled=true;$('options').hidden=false;$('remove').disabled=false;$('message').textContent='';sync();}
 async function choose(candidate){
  if(!candidate||busy)return;reset();
@@ -36,15 +36,16 @@ $('preview').addEventListener('loadedmetadata',()=>{if(file){const v=$('preview'
 for(const id of ['export-mode','fps','quality','bitrate'])$(id).addEventListener('input',sync);
 for(const [id,resolution] of [['preset-hd',1080],['preset-max',4096]])$(id).onclick=()=>{$('export-mode').value='custom';$('resolution').value=String(resolution);$('fps').value='60';$('quality').value='18';$('bitrate').value='';sync();};
 $('patch').onclick=async()=>{
- if(!file||busy)return;const custom=$('export-mode').value==='custom',config=settings();$('message').textContent='';
+ if(!file||busy)return;const mode=$('export-mode').value,custom=mode==='custom',transport=mode==='transport',config=settings();$('message').textContent='';
  if(custom){try{exportArgs(config);}catch(e){$('message').textContent=e.message;return;}}
  busy=true;controller=new AbortController();$('preview').pause();$('patch').disabled=true;$('remove').disabled=true;controls().forEach(c=>c.disabled=true);$('progress-area').hidden=false;
  const progress=(n,label)=>{$('bar').style.width=n+'%';$('progress-label').textContent=label;};
  try{
   let result;
   if(custom){const encoded=await encodeVideo(file,config,{signal:controller.signal,onProgress:progress});const output=encoded.blob;output.name=encoded.name;result=await patchVideo(output,{unspecified:false,signal:controller.signal,onProgress:(n)=>progress(97+n*.03,'Finishing MP4 container')});result.name=encoded.name;}
+  else if(transport)result=await encodeVideo(file,config,{transport:true,signal:controller.signal,onProgress:progress});
   else result=await patchVideo(file,{signal:controller.signal,onProgress:progress});
-  resultURL=URL.createObjectURL(result.blob);$('download').href=resultURL;$('download').download=result.name;$('result-note').textContent=custom?`${config.fps} FPS · H.264 MP4 · ${size(result.blob.size)} · audio included when present`:'Original video and audio preserved without re-encoding.';$('result').hidden=false;$('patch').hidden=true;$('options').hidden=true;$('progress-area').hidden=true;
+  resultURL=URL.createObjectURL(result.blob);$('download').href=resultURL;$('download').download=result.name;$('result-note').textContent=transport?'Original H.264 video · MPEG transport stream · AAC audio when present':custom?`${config.fps} FPS · H.264 MP4 · ${size(result.blob.size)} · audio included when present`:'Original video and audio preserved without re-encoding.';$('result').hidden=false;$('patch').hidden=true;$('options').hidden=true;$('progress-area').hidden=true;
  }catch(error){$('message').textContent=error.name==='AbortError'?'Cancelled. Your original file is unchanged.':fileAccessMessage(error);$('patch').disabled=false;$('progress-area').hidden=true;}
  finally{busy=false;$('remove').disabled=false;controls().forEach(c=>c.disabled=false);sync();}
 };
